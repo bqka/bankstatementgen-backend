@@ -27,7 +27,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
             return;
         }
 
-        String keyFromRequest = request.getHeader("X-INTERNAL-KEY");
+        String keyFromRequest = request.getHeader("X-API-KEY");
 
         if (keyFromRequest == null || !keyFromRequest.equals(apiKey)) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
