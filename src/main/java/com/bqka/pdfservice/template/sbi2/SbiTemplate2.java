@@ -24,9 +24,6 @@ public class SbiTemplate2 implements BankPdfTemplate {
 
                 Document doc = new Document(PageSize.A4, 36, 36, 36, 36);
                 PdfWriter writer = PdfWriter.getInstance(doc, out);
-                System.out.println(PdfWriter.class.getProtectionDomain()
-                                .getCodeSource()
-                                .getLocation());
 
                 writer.setPdfVersion(PdfWriter.PDF_VERSION_1_4);
 
@@ -143,7 +140,6 @@ public class SbiTemplate2 implements BankPdfTemplate {
                 final float TOP_Y = 806f;
 
                 final float[] y = { writer.getVerticalPosition(true) };
-                System.out.println(y[0]);
 
                 cb.beginText();
                 cb.setTextMatrix(LEFT, y[0]);

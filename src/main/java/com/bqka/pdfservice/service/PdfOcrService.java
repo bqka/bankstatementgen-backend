@@ -3,12 +3,14 @@ package com.bqka.pdfservice.service;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
@@ -34,9 +36,9 @@ public class PdfOcrService {
 
     /* ===================== PDF OCR ===================== */
 
-    public String extractTextFromPdf(byte[] pdfBytes) throws Exception {
+    public String extractTextFromPdf(byte[] pdfBytes, String password) throws Exception {
 
-        try (PDDocument document = PDDocument.load(pdfBytes)) {
+        try (PDDocument document = PDDocument.load(pdfBytes, password)) {
 
             PDFTextStripper stripper = new PDFTextStripper();
             int totalPages = document.getNumberOfPages();
@@ -64,8 +66,6 @@ public class PdfOcrService {
             } else if(totalPages > 2){
                 pagesToOcr.add(totalPages - 2);
             }
-
-            System.out.println("PAGES: " + pagesToOcr.size());
 
             for (int pageIndex : pagesToOcr) {
                 BufferedImage image =
@@ -114,4 +114,15 @@ public class PdfOcrService {
 
         return gray;
     }
+    
+    public static boolean isEncrypted(InputStream inputStream, String password) {
+        try (PDDocument document = PDDocument.load(inputStream, password)) {
+            return document.isEncrypted();
+        } catch (InvalidPasswordException e) {
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to read PDF", e);
+        }
+    }
+
 }

@@ -38,7 +38,8 @@ public class PdfController {
     Statement stmt = SampleStatements.kotak();
 
     return ResponseEntity.ok()
-        .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+        .header(HttpHeaders.CONTENT_DISPOSITION,
+            "inline; filename=\"statement-preview.pdf\"")
         .contentType(MediaType.APPLICATION_PDF)
         .body(PdfGenerator.generate(stmt));
   }

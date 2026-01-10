@@ -1,5 +1,6 @@
 package com.bqka.pdfservice.ocr.extractors;
 
+import java.util.Arrays;
 import java.util.regex.*;
 
 public class AddressExtractor {
@@ -22,7 +23,7 @@ public class AddressExtractor {
 
         Matcher m = Pattern.compile(
                 "\\bADDRESS\\b\\s*[:\\-]?\\s*" +
-                        "(.{20,400}?)" + 
+                        "(.{20,400}?)" +
                         "(?=\\n\\s*(DATE|ACCOUNT|IFSC|MICR)|$)",
                 Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(normalized);
 
@@ -44,51 +45,67 @@ public class AddressExtractor {
     /* ---------------- AXIS ---------------- */
 
     private static String extractAxisCustomerAddress(String text) {
-        String[] lines = text.split("\\r?\\n");
-        StringBuilder address = new StringBuilder();
-        boolean capture = false;
+        String normalized = text
+                .replace("\r\n", "\n")
+                .replace("\r", "\n");
 
-        for (String line : lines) {
-            String upper = line.toUpperCase();
+        Pattern p = Pattern.compile(
+                "(?is)Joint\\s+Holder.*?\\R(.*?)\\s*(?=MICR\\s*Code)");
 
-            if (upper.contains("JOINT HOLDER")) {
-                capture = true;
-                continue;
-            }
-
-            if (capture) {
-                if (upper.contains("IFSC") ||
-                        upper.contains("MICR") ||
-                        upper.contains("CUSTOMER ID") ||
-                        upper.contains("PAN") ||
-                        upper.contains("SCHEME")) {
-                    break;
-                }
-
-                if (line.trim().length() >= 5) {
-                    address.append(line.trim()).append(", ");
-                }
-            }
-        }
-
-        if (address.length() == 0)
-            return null;
-
-        return clean(address.toString());
-    }
-
-    /* ---------------- KOTAK ---------------- */
-
-    private static String extractKotakCustomerAddress(String text) {
-        Matcher m = Pattern.compile(
-                "ACCOUNT\\s+HOLDER.*?\\n(.{30,200}?\\b\\d{6}\\b)",
-                Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(text);
+        Matcher m = p.matcher(normalized);
 
         if (m.find()) {
-            return clean(m.group(1));
+            String block = m.group(1).trim();
+
+            block = block.replaceAll("(?i)Customer\\s*ID\\s*[:\\-]?\\s*\\d+", "");
+            block = block.replaceAll("(?i)IFSC\\s*Code\\s*[:\\-]?\\s*[A-Z0-9]+", "");
+            block = block.replaceAll("(?i)MICR\\s*Code\\s*[:\\-]?\\s*\\d+", "");
+            block = block
+                    .replaceAll("[ \t]+", " ")
+                    .replaceAll("\\n{2,}", "\n")
+                    .trim();
+
+            return block;
         }
 
         return null;
+    }
+
+    /* ---------------- KOTAK ---------------- */
+    public static String extractKotakCustomerAddress(String text) {
+        if (text == null)
+            return null;
+
+        Pattern crnPattern = Pattern.compile(
+                "(?is)CRN\\s+[xX\\d]{9,11}\\s*(.*?)\\s*(?=MICR|IFSC|Account\\s+No)");
+
+        Matcher crnMatcher = crnPattern.matcher(text);
+        if (crnMatcher.find()) {
+            return crnMatcher.group(1).trim();
+        }
+
+        Pattern ifscPattern = Pattern.compile(
+                "(?is)IFSC\\s*Code\\s*[:\\-]?\\s*[A-Z0-9]+\\s*(.*?)\\s*(?=Date|Narration|Account|MICR)");
+
+        Matcher ifscMatcher = ifscPattern.matcher(text);
+        if (ifscMatcher.find()) {
+            String block = ifscMatcher.group(1).trim();
+            return stripFirstLine(block); // remove name only
+        }
+
+        return null;
+    }
+
+    private static String stripFirstLine(String block) {
+        if (block == null)
+            return null;
+
+        String[] lines = block.split("\\r?\\n");
+        if (lines.length <= 1)
+            return block;
+
+        return String.join("\n",
+                Arrays.copyOfRange(lines, 1, lines.length)).trim();
     }
 
     /* ---------------- CLEANER ---------------- */

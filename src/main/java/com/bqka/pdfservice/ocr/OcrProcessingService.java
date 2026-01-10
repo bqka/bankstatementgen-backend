@@ -38,18 +38,64 @@ public class OcrProcessingService {
 
         r.branchPhoneNo = extractBranchPhone(cleaned, r.bankName);
         r.branch = BranchExtractor.extract(cleaned, r.bankName);
+        r.customerRelNo = extractCrn(cleaned);
+        r.email = extractEmail(cleaned);
 
-        if (r.bankName == "SBI") {
+        if (r.bankName.equalsIgnoreCase("SBI")) {
             r.branchAddress = null;
             r.branchPhoneNo = null;
-        } else if (r.bankName == "KOTAK") {
+        } else if (r.bankName.equalsIgnoreCase("KOTAK")) {
             r.accountType = null;
-            r.address = null;
-        } else if (r.bankName == "AXIS") {
+            // r.address = null;
+        } else if (r.bankName.equalsIgnoreCase("AXIS")) {
+            r.phoneNumber = extractPhone(cleaned);
             r.branch = null;
         }
 
         return r;
+    }
+
+    public static String extractEmail(String text) {
+        if (text == null)
+            return null;
+
+        Matcher m = Pattern.compile(
+                "(?i)(registered\\s*)?(email( id)?)\\s*[:\\-]\\s*([A-Za-z0-9._%+-]{3,20}@[A-Za-z0-9.-]+\\.[A-Za-z]{2,})")
+                .matcher(text);
+
+        if (m.find()) {
+            return m.group(4);
+        }
+
+        return null;
+    }
+
+    public static String extractCrn(String text) {
+        if (text == null)
+            return null;
+
+        Matcher m = Pattern.compile("(?i)(customer|cust reln|cif)\\s*(id|no\\.?)\\s*[:\\-]\s*([xX\\d]{9,11})").matcher(text);
+
+        if (m.find()) {
+            return m.group(3);
+        }
+
+        return null;
+    }
+
+    public static String extractPhone(String text) {
+        if (text == null)
+            return null;
+
+        Matcher m = Pattern
+                .compile("(?i)(registered\\s*)?(mobile|phone)\\s*(no\\.?|number)?\\s*[:\\-]?\\s*([xX\\d]{10})")
+                .matcher(text);
+
+        if (m.find()) {
+            return m.group(4);
+        }
+
+        return null;
     }
 
     public static String extractBranchPhone(String text, String bank) {
@@ -66,7 +112,7 @@ public class OcrProcessingService {
                     "TEL\\s*[:\\-]?\\s*([+0-9()\\s\\-]{8,20})",
                     Pattern.CASE_INSENSITIVE).matcher(normalized);
 
-            if(m.find()){
+            if (m.find()) {
                 return cleanPhone(m.group(1));
             }
         }
@@ -207,5 +253,4 @@ public class OcrProcessingService {
 
         return s;
     }
-
 }

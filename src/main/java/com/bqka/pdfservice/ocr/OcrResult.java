@@ -6,6 +6,7 @@ public class OcrResult {
   public String accountNumber;
   public String ifsc;
   public String micr;
+  public String customerRelNo;
   public String bankName;
 
   public String branch;

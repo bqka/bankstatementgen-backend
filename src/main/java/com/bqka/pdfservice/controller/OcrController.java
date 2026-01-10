@@ -1,5 +1,8 @@
 package com.bqka.pdfservice.controller;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.bqka.pdfservice.ocr.OcrProcessingService;
 import com.bqka.pdfservice.ocr.OcrResult;
+import com.bqka.pdfservice.ocr.utils.OcrResponse;
 import com.bqka.pdfservice.service.PdfOcrService;
 
 @RestController
@@ -26,34 +30,53 @@ public class OcrController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OcrResult> ocrPdf(
-            @RequestParam("file") MultipartFile file) throws Exception {
+    public ResponseEntity<OcrResponse> ocrPdf(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "password", required = false) String password) throws Exception {
 
         String text;
         String name = file.getOriginalFilename().toLowerCase();
+        byte[] bytes = file.getBytes();
 
         if (name.endsWith(".pdf")) {
-            text = ocrService.extractTextFromPdf(file.getBytes());
+            boolean encrypted = PdfOcrService.isEncrypted(new ByteArrayInputStream(bytes), password);
+
+            if (encrypted && password == null) {
+                OcrResponse r = OcrResponse.encrypted("PDF is Password Protected");
+                return ResponseEntity.ok(r);
+            }
+
+            text = ocrService.extractTextFromPdf(bytes, password);
+
         } else {
-            text = ocrService.extractTextFromImage(file.getBytes());
+            text = ocrService.extractTextFromImage(bytes);
         }
 
         OcrResult result = OcrProcessingService.process(text);
         result.rawText = "";
+        OcrResponse r = OcrResponse.success(result);
 
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(r);
     }
 
     // OCR a generated test PDF
     @GetMapping("/preview")
-    public ResponseEntity<OcrResult> previewOcr() throws Exception {
+    public ResponseEntity<OcrResponse> previewOcr() throws Exception {
 
         ClassPathResource pdfResource = new ClassPathResource("test/axis.pdf");
         byte[] pdf = pdfResource.getInputStream().readAllBytes();
 
-        String text = ocrService.extractTextFromPdf(pdf);
-        OcrResult result = OcrProcessingService.process(text);
+        boolean encrypted = PdfOcrService.isEncrypted(new ByteArrayInputStream(pdf), null);
 
-        return ResponseEntity.ok(result);
+        if (encrypted) {
+            OcrResponse r = OcrResponse.encrypted("PDF is Password Protected");
+            return ResponseEntity.ok(r);
+        }
+
+        String text = ocrService.extractTextFromPdf(pdf, null);
+        OcrResult result = OcrProcessingService.process(text);
+        OcrResponse r = OcrResponse.success(result);
+
+        return ResponseEntity.ok(r);
     }
 }
