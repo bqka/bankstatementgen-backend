@@ -49,10 +49,26 @@ public class OcrProcessingService {
             // r.address = null;
         } else if (r.bankName.equalsIgnoreCase("AXIS")) {
             r.phoneNumber = extractPhone(cleaned);
+            r.pan = extractPan(cleaned);
             r.branch = null;
         }
 
         return r;
+    }
+
+    public static String extractPan(String text){
+        if (text == null)
+            return null;
+
+        Matcher m = Pattern.compile(
+                "(?i)PAN\\s*:([A-Z]{5}[0-9]{4}[A-Z])")
+                .matcher(text);
+
+        if (m.find()) {
+            return m.group(1);
+        }
+
+        return null;
     }
 
     public static String extractEmail(String text) {
