@@ -65,10 +65,10 @@ public class AxisTemplate implements BankPdfTemplate {
         // ---------------- RIGHT COLUMN ----------------
         text(cb, f3, 9, 465f, 708, "Customer ID :" + stmt.details.customerRelNo);
 
-        text(cb, f3, 9, leftX, 695, stmt.details.state + "-INDIA");
+        // text(cb, f3, 9, leftX, 695, stmt.details.state + "-INDIA");
         text(cb, f3, 9, 459.49f, 695, "IFSC Code :" + stmt.details.ifsc);
 
-        text(cb, f3, 9, leftX, 682, stmt.details.pincode);
+        // text(cb, f3, 9, leftX, 682, stmt.details.pincode);
         text(cb, f3, 9, 467.49f, 682, "MICR Code :" + stmt.details.micr);
 
         text(cb, f3, 9, 469.76f, 669, "Nominee Registered : N");
