@@ -5,6 +5,12 @@ import java.util.regex.*;
 public class NameExtractor {
 
     public static String extract(String text, String bank) {
+        if (text == null)
+            return null;
+
+        if(bank.equalsIgnoreCase("AXIS")){
+            return extractAxis(text);
+        }
 
         Matcher labeled = Pattern.compile(
                 "(NAME|CUSTOMER|ACCOUNT HOLDER|ACCOUNT\\s+NAME)\\s*[:\\-]\\s*([^\r\n]+)",
@@ -23,6 +29,18 @@ public class NameExtractor {
             if (m.find()) {
                 return clean(m.group(2));
             }
+        }
+
+        return null;
+    }
+
+    public static String extractAxis(String text) {
+        String normalized = text.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
+
+        Matcher m = Pattern.compile("(?is)(.*?)\\s*(?=Joint Holder :- -)").matcher(normalized);
+
+        if (m.find()) {
+            return m.group(1);
         }
 
         return null;
