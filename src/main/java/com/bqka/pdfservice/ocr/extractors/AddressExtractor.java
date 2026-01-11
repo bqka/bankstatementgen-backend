@@ -116,6 +116,7 @@ public class AddressExtractor {
                 .replaceAll("\\s*,\\s*", ", ")
                 .replaceAll(",\\s*$", "")
                 .replaceAll("\\b(Date|Period|Statement).*", "")
+                .replaceAll("\\n\\s+", "\n")
                 .trim();
     }
 }

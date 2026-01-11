@@ -63,7 +63,7 @@ public class OcrController {
     @GetMapping("/preview")
     public ResponseEntity<OcrResponse> previewOcr() throws Exception {
 
-        ClassPathResource pdfResource = new ClassPathResource("test/axis.pdf");
+        ClassPathResource pdfResource = new ClassPathResource("test/sbi.pdf");
         byte[] pdf = pdfResource.getInputStream().readAllBytes();
 
         boolean encrypted = PdfOcrService.isEncrypted(new ByteArrayInputStream(pdf), null);
