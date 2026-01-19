@@ -5,13 +5,23 @@ import java.util.regex.*;
 public class BranchExtractor {
 
     public static String extract(String text, String bank) {
-
-        Matcher labeled = Pattern.compile(
-                "BRANCH\\s*(?:NAME)?\\s*(?:[:\\-]\\s*)?\\s*([^\\r\\n]{3,100})",
-                Pattern.CASE_INSENSITIVE).matcher(text);
-
-        if (labeled.find()) {
-            return clean(labeled.group(1));
+        
+        Matcher branchName = Pattern.compile(
+            "BRANCH\\s+NAME\\s*(?:[:\\-]\\s*)?\\s*([^\\r\\n]{3,100})",
+            Pattern.CASE_INSENSITIVE
+        ).matcher(text);
+        
+        if (branchName.find()) {
+            return clean(branchName.group(1));
+        }
+        
+        Matcher branch = Pattern.compile(
+            "BRANCH\\s*(?!CODE\\b)\\s*(?:[:\\-]\\s*)?\\s*([^\\r\\n]{3,100})",
+            Pattern.CASE_INSENSITIVE
+        ).matcher(text);
+        
+        if (branch.find()) {
+            return clean(branch.group(1));
         }
 
         if ("KOTAK".equals(bank)) {

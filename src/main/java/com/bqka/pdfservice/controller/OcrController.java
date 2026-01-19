@@ -1,6 +1,5 @@
 package com.bqka.pdfservice.controller;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 
 import org.springframework.core.io.ClassPathResource;
@@ -63,7 +62,7 @@ public class OcrController {
     @GetMapping("/preview")
     public ResponseEntity<OcrResponse> previewOcr() throws Exception {
 
-        ClassPathResource pdfResource = new ClassPathResource("test/sbi.pdf");
+        ClassPathResource pdfResource = new ClassPathResource("test/sbinew.pdf");
         byte[] pdf = pdfResource.getInputStream().readAllBytes();
 
         boolean encrypted = PdfOcrService.isEncrypted(new ByteArrayInputStream(pdf), null);

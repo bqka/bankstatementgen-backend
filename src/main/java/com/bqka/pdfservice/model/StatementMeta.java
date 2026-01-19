@@ -8,4 +8,6 @@ public class StatementMeta {
   public long seed;
   public String statementPeriodStart;
   public String statementPeriodEnd;
+  
+  public String password;
 }

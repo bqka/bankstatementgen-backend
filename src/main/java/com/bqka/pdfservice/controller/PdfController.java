@@ -22,7 +22,7 @@ public class PdfController {
 
     ObjectMapper mapper = new ObjectMapper();
     String json = mapper.writeValueAsString(statement.meta);
-    System.out.println(json);
+    // System.out.println(json);
 
     return ResponseEntity.ok()
         .header(HttpHeaders.CONTENT_TYPE, "application/pdf")

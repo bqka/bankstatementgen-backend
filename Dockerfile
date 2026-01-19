@@ -34,6 +34,8 @@ COPY sbi.jpg ./sbi.jpg
 COPY sbi2.jpg ./sbi2.jpg
 COPY image.rgb ./image.rgb
 COPY smask.gray ./smask.gray
+COPY kotaknew.pdf ./kotaknew.pdf
+COPY sbinew.pdf ./sbinew.pdf
 
 # Build the application
 RUN mvn clean package -DskipTests -B

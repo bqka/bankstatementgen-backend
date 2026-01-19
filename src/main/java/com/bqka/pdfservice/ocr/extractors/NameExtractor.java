@@ -13,7 +13,7 @@ public class NameExtractor {
         }
 
         Matcher labeled = Pattern.compile(
-                "(NAME|CUSTOMER|ACCOUNT HOLDER|ACCOUNT\\s+NAME)\\s*[:\\-]\\s*([^\r\n]+)",
+                "(WELCOME|NAME|CUSTOMER|ACCOUNT HOLDER|ACCOUNT\\s+NAME)\\s*[:\\-]\\s*([^\r\n]+)",
                 Pattern.CASE_INSENSITIVE).matcher(text);
 
         if (labeled.find()) {
