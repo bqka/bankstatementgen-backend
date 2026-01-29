@@ -17,6 +17,9 @@ public class BranchAddressExtractor {
                 return extractAxis(text);
             case "KOTAK":
                 return extractKotak(text);
+            case "HDFC":
+                Matcher m = Pattern.compile("(?is)\\s*Address\\s*:\\s*(.*?)(?=\\n+\\s*City)").matcher(text);
+                if(m.find()) return m.group(1);
             default:
                 return extractLabeled(text);
         }

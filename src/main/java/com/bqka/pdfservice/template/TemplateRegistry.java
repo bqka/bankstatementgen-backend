@@ -2,6 +2,8 @@ package com.bqka.pdfservice.template;
 
 import com.bqka.pdfservice.model.BankTemplate;
 import com.bqka.pdfservice.template.axis.AxisTemplate;
+import com.bqka.pdfservice.template.boi.BoiTemplate;
+import com.bqka.pdfservice.template.hdfc.HdfcTemplate;
 import com.bqka.pdfservice.template.kotak.KotakTemplate;
 import com.bqka.pdfservice.template.kotaknew.KotakNewTemplate;
 import com.bqka.pdfservice.template.sbi.SbiTemplate;
@@ -23,6 +25,8 @@ public class TemplateRegistry {
     MAP.put(BankTemplate.KOTAKNEW, new KotakNewTemplate());
     MAP.put(BankTemplate.AXIS, new AxisTemplate());
     MAP.put(BankTemplate.SBINEW, new SbiNewTemplate());
+    MAP.put(BankTemplate.BOI, new BoiTemplate());
+    MAP.put(BankTemplate.HDFC, new HdfcTemplate());
   }
 
   public static BankPdfTemplate get(BankTemplate template) {

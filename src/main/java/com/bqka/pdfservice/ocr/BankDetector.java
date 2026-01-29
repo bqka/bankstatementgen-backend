@@ -7,7 +7,9 @@ public final class BankDetector {
     private static final Map<String, String> IFSC_PREFIX_TO_BANK = Map.ofEntries(
             Map.entry("SBIN", "SBI"),
             Map.entry("UTIB", "AXIS"),
-            Map.entry("KKBK", "KOTAK")
+            Map.entry("KKBK", "KOTAK"),
+            Map.entry("BKID", "BOI"),
+            Map.entry("HDFC", "HDFC")
     );
 
     public static String detectFromIFSC(String ifsc) {

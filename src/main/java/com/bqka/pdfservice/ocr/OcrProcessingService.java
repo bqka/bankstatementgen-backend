@@ -95,6 +95,13 @@ public class OcrProcessingService {
             r.phoneNumber = extractPhone(cleaned);
             r.pan = extractPan(cleaned);
             r.branch = null;
+        } else if(r.bankName.equalsIgnoreCase("HDFC")){
+            Matcher m = Pattern.compile("(?is)city\\s*:\\s*(.*?)\\n+state\\s*:\\s*(.*?)\\n+").matcher(cleaned);
+            if(m.find()) r.city = m.group(1);
+            if(m.find()) r.state = m.group(2);
+            
+            m = Pattern.compile("(?is)phone no.\\s*:\\s*(.*?)\\n+OD").matcher(cleaned);
+            if(m.find())  r.phoneNumber = m.group(1);
         }
 
         return r;

@@ -1,7 +1,7 @@
 {
   "id": "376cd8b9-b8e7-83af-8a99-6c210c1d4b14",
   "details": {
-    "name": "Ved Prakash Patel",
+    "name": "MR. GOATED GOAT",
     "accountNumber": "40973913131",
     "ifsc": "SBIN0061102",
     "branch": "Surat-Cloth Market",
@@ -13,14 +13,15 @@
     "customerRelNo": "xxxxxx629",
     "accountType": "Savings",
     "startingBalance": 96500,
-    "state": "MADHYA PRADESH",
+    "state": "BEST STATE WORLD",
+    "city": "CITY WORLD",
     "pincode": 462038,
     "phoneNumber": "XXXXXX8885",
     "email": "RAXXXX15@GMAIL.COM"
   },
   "meta": {
     "generatedAt": "2025-12-24T21:21:49.812Z",
-    "template": "SBINEW",
+    "template": "HDFC",
     "statementPeriodStart": "2026-01-01T13:58:30.567Z",
     "statementPeriodEnd": "2026-01-09T10:50:41.748Z",
     "userType": "salaried",
@@ -31,16 +32,16 @@
     {
       "id": "02f40d18-c409-95bd-ea03-c8a6554831f2",
       "date": "2025-10-01T11:30:26.000Z",
-      "description": "DEP TFR SBIYA25120171604877377569- Loan repayment 0044039028684 OF Mr. Sarjan Singh AT 61102 WAGON COACH FACTORY",
-      "reference": "NEFT-643832723883",
-      "debit": 0,
-      "credit": 49071.76,
-      "balance": 74071.76
+      "description": "UPI/518648023125/DR/Google/ICIC/gpayrecha/UPI",
+      "reference": "0000421492523946",
+      "debit": 366.90,
+      "credit": 0,
+      "balance": 234.87
     },
     {
       "id": "24658dce-18fb-2650-6eac-3aa53c1c9327",
       "date": "2025-10-03T15:42:31.000Z",
-      "description": "INTEREST CREDIT", "reference": "UPI-796593101692",
+      "description": "UPI/307358311009/DR/MOHDA/YESB/810317290/Paymen", "reference": "UPI-796593101692",
       "debit": 1004.04,
       "credit": 0,
       "balance": 73067.72
@@ -48,7 +49,7 @@
     {
       "id": "c3dbac98-801f-b64c-74f5-b831d9ac00ac",
       "date": "2025-10-05T10:18:27.000Z",
-      "description": "UPI/PRIYA RAO/111383981966/UPI",
+      "description": "UPI/456030599414/CR/ARIFK/UTIB/arifkhan5/Paymen",
       "reference": "UPI-111383981966",
       "debit": 2066.11,
       "credit": 0,
@@ -183,7 +184,7 @@
     {
       "id": "b819d17f-32d3-00d8-7f80-e57880dbd86d",
       "date": "2025-11-05T05:50:07.000Z",
-      "description": "NEFT/ACME CORP/Salary",
+      "description": "UPI-SAFAL STORE-PAYTMQR5AJQ81@PAYTM-YESB 0000423859972088",
       "reference": "NEFT-141952462254",
       "debit": 0,
       "credit": 50939.04,
@@ -318,7 +319,7 @@
     {
       "id": "6aaafcca-94de-dcfd-bce9-b0637e89a9e1",
       "date": "2025-12-05T08:33:09.000Z",
-      "description": "NEFT/ACME CORP/Salary",
+      "description": "UPI-SAFAL STORE-PAYTMQR5AJQ81@PAYTM-YESB 0000423859972088",
       "reference": "NEFT-648442923602",
       "debit": 0,
       "credit": 49716.3,
@@ -431,33 +432,6 @@
       "debit": 3453.25,
       "credit": 0,
       "balance": 46314.54
-    },
-    {
-      "id": "b789f03d-ad8b-c1aa-e8fb-16b3733749c3",
-      "date": "2025-12-29T09:17:15.000Z",
-      "description": "UPI/SURESH GUPTA/714060419624/UPI",
-      "reference": "UPI-714060419624",
-      "debit": 234.92,
-      "credit": 0,
-      "balance": 46079.62
-    },
-    {
-      "id": "e64ced8b-9fca-bb69-4c49-692a8b42ccdc",
-      "date": "2025-12-29T14:24:12.000Z",
-      "description": "UPI/ASHOK NAIR/469340425608/UPI",
-      "reference": "UPI-469340425608",
-      "debit": 2326.93,
-      "credit": 0,
-      "balance": 43752.69
-    },
-    {
-      "id": "d900f572-732d-b455-9b2e-2ab5f9d2b688",
-      "date": "2025-12-30T09:26:51.000Z",
-      "description": "UPI/VIKAS NAIR/689071869094/UPI",
-      "reference": "UPI-689071869094",
-      "debit": 0,
-      "credit": 2897.19,
-      "balance": 46649.88
     }
   ]
 }

@@ -36,6 +36,8 @@ COPY image.rgb ./image.rgb
 COPY smask.gray ./smask.gray
 COPY kotaknew.pdf ./kotaknew.pdf
 COPY sbinew.pdf ./sbinew.pdf
+COPY boi.pdf ./boi.pdf
+COPY hdfc.pdf ./hdfc.pdf
 
 # Build the application
 RUN mvn clean package -DskipTests -B

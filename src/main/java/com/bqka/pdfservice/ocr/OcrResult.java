@@ -17,6 +17,8 @@ public class OcrResult {
   public String pincode;
   public String accountType;
   public String pan;
+  public String city;
+  public String state;
 
   public String phoneNumber;
   public String email;

@@ -8,6 +8,10 @@ public class AddressExtractor {
     public static String extract(String text, String bank) {
         if (text == null)
             return null;
+            
+        if ("BOI".equals(bank)) {
+            return extractBoiCustomerAddress(text);
+        }
 
         if ("AXIS".equals(bank)) {
             return extractAxisCustomerAddress(text);
@@ -15,6 +19,8 @@ public class AddressExtractor {
 
         if ("KOTAK".equals(bank)) {
             return extractKotakCustomerAddress(text);
+        } else if("HDFC".equals(bank)){
+            return extractHdfc(text);
         }
 
         String normalized = text
@@ -39,6 +45,31 @@ public class AddressExtractor {
             return clean(pinBlock.group(1));
         }
 
+        return null;
+    }
+    
+    public static String extractHdfc(String text) {
+        if (text == null)
+            return null;
+        Pattern pattern = Pattern.compile(
+                "(?is)Page No\\s*\\.\\s*:?\\s*\\d+\\s*Statement of account\\s*\\n+[^\\n]+\\n(.*?)(?=\\n\\s*JOINT)");
+        Matcher m = pattern.matcher(text);
+        if(m.find()){
+            return m.group(1);
+        }
+        return null;
+    }
+
+    
+    public static String extractBoiCustomerAddress(String text) {
+        if (text == null)
+            return null;
+        Pattern pattern = Pattern.compile(
+                "(?is)account holder address\\s*:\\s*(.*?)(?=Customer)");
+        Matcher m = pattern.matcher(text);
+        if(m.find()){
+            return m.group(1);
+        }
         return null;
     }
 

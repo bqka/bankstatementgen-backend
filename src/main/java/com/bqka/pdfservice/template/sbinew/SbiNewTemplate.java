@@ -4,6 +4,10 @@ import com.bqka.pdfservice.model.Statement;
 import com.bqka.pdfservice.model.Transaction;
 import com.bqka.pdfservice.template.BankPdfTemplate;
 import com.bqka.pdfservice.template.sbinew.XObjectFactory.RawFormDef;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
+import com.lowagie.text.pdf.PdfWriter;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -87,26 +91,10 @@ public class SbiNewTemplate implements BankPdfTemplate {
         this.stmt = statement;
 
         try (PDDocument doc = new PDDocument()) {
-            
             if(stmt.meta.password == null){
                 throw new Error("No Password Provided");
             }
             
-            AccessPermission ap = new AccessPermission();
-            ap.setCanPrint(true);
-            
-            // Standard protection policy
-            StandardProtectionPolicy spp =
-                    new StandardProtectionPolicy(
-                            stmt.meta.password,   // owner password
-                            stmt.meta.password,    // user password
-                            ap
-                    );
-            
-            spp.setEncryptionKeyLength(40); // 🔑 40-bit
-            spp.setPreferAES(false);        // ❗ forces RC4
-            
-            doc.protect(spp);
             PDDocumentInformation info = new PDDocumentInformation();
             info.setProducer("OpenPDF 1.3.32");
             info.setCreator(
@@ -253,7 +241,26 @@ public class SbiNewTemplate implements BankPdfTemplate {
             viewerPrefs.setName("PrintScaling", "AppDefault");
 
             doc.save(out);
-            return out.toByteArray();
+            
+            // Encryption
+            byte[] pdfBytes = out.toByteArray();
+            
+            PdfReader reader = new PdfReader(pdfBytes);
+            ByteArrayOutputStream encOut = new ByteArrayOutputStream();
+            
+            PdfStamper stamper = new PdfStamper(reader, encOut);
+            
+            stamper.setEncryption(
+                stmt.meta.password.getBytes(),                 // user password
+                stmt.meta.password.getBytes(),                 // owner password
+                PdfWriter.AllowPrinting,
+                PdfWriter.STANDARD_ENCRYPTION_40
+            );
+            
+            stamper.close();
+            reader.close();
+
+            return encOut.toByteArray();
         } catch (Exception e) {
             throw new RuntimeException("PDF generation failed", e);
         }

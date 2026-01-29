@@ -116,8 +116,8 @@ public class PdfOcrService {
     }
     
     public static boolean isEncrypted(InputStream inputStream, String password) {
-        try (PDDocument document = PDDocument.load(inputStream, password)) {
-            return document.isEncrypted();
+        try (PDDocument document = PDDocument.load(inputStream)) {
+            return false;
         } catch (InvalidPasswordException e) {
             return true;
         } catch (Exception e) {

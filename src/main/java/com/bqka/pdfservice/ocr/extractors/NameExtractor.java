@@ -10,6 +10,10 @@ public class NameExtractor {
 
         if(bank.equalsIgnoreCase("AXIS")){
             return extractAxis(text);
+        } else if(bank.equalsIgnoreCase("BOI")){
+            return extractBoi(text);
+        } else if(bank.equalsIgnoreCase("HDFC")){
+            return extractHdfc(text);
         }
 
         Matcher labeled = Pattern.compile(
@@ -29,6 +33,36 @@ public class NameExtractor {
             if (m.find()) {
                 return clean(m.group(2));
             }
+        }
+
+        return null;
+    }
+    
+    public static String extractHdfc(String text) {
+        String normalized = text.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
+
+        Pattern p = Pattern.compile(
+            "(?i)Page No\\s*\\.:?\\s*\\d+\\s*Statement of account\\s*\\n+(.*?)(?=\\n)"
+        );
+        Matcher m = p.matcher(normalized);
+
+        if (m.find()) {
+            return m.group(1);
+        }
+
+        return null;
+    }
+    
+    public static String extractBoi(String text) {
+        String normalized = text.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
+
+        Pattern p = Pattern.compile(
+            "(?is)account holder name\\s*:\\s*(.*?)(?=\\baccount holder address\\b|\\baccount\\b|\\bdate\\b|$)"
+        );
+        Matcher m = p.matcher(normalized);
+
+        if (m.find()) {
+            return m.group(1);
         }
 
         return null;
