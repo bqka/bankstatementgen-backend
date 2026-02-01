@@ -67,41 +67,45 @@ public class OcrProcessingService {
                 r.ifsc = sbi.group(4);
                 r.accountType = null;
                 r.ckycr = extractCkycr(cleaned);
-                
+
                 Matcher m = Pattern.compile(
                     "(?is)[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\s*([\\s\\S]*?)\\s*Date\\s+of\\s+Statement"
                 ).matcher(cleaned);
-                
+
                 if (m.find()) {
                     r.address = m.group(1).trim();
                 }
-                
+
                 m = Pattern.compile(
                     "(?is)2\\.50\\s*%\\s*p\\.a\\.\\s*" +
-                    "0\\.00\\s*" +
-                    "\\d{2}/\\d{2}/\\d{4}\\s*" +
-                    "([\\s\\S]*?)\\s*" +
-                    "Branch\\s+Code"
+                        "0\\.00\\s*" +
+                        "\\d{2}/\\d{2}/\\d{4}\\s*" +
+                        "([\\s\\S]*?)\\s*" +
+                        "Branch\\s+Code"
                 ).matcher(cleaned);
-                
+
                 if (m.find()) {
                     r.branchAddress = m.group(1).trim();
                 }
             }
         } else if (r.bankName.equalsIgnoreCase("KOTAK")) {
-            r.accountType = null;
+            // r.accountType = null;
             // r.address = null;
         } else if (r.bankName.equalsIgnoreCase("AXIS")) {
             r.phoneNumber = extractPhone(cleaned);
             r.pan = extractPan(cleaned);
             r.branch = null;
-        } else if(r.bankName.equalsIgnoreCase("HDFC")){
-            Matcher m = Pattern.compile("(?is)city\\s*:\\s*(.*?)\\n+state\\s*:\\s*(.*?)\\n+").matcher(cleaned);
-            if(m.find()) r.city = m.group(1);
-            if(m.find()) r.state = m.group(2);
-            
-            m = Pattern.compile("(?is)phone no.\\s*:\\s*(.*?)\\n+OD").matcher(cleaned);
-            if(m.find())  r.phoneNumber = m.group(1);
+        } else if (r.bankName.equalsIgnoreCase("HDFC")) {
+            Matcher m = Pattern.compile(
+                "(?is)city\\s*:\\s*(.*?)\\n+state\\s*:\\s*(.*?)\\n+"
+            ).matcher(cleaned);
+            if (m.find()) r.city = m.group(1);
+            if (m.find()) r.state = m.group(2);
+
+            m = Pattern.compile("(?is)phone no.\\s*:\\s*(.*?)\\n+OD").matcher(
+                cleaned
+            );
+            if (m.find()) r.phoneNumber = m.group(1);
         }
 
         return r;
@@ -153,7 +157,7 @@ public class OcrProcessingService {
         if (text == null) return null;
 
         Matcher m = Pattern.compile(
-            "(?i)(customer|cust reln|cif)\\s*(id|no\\.?)\\s*[:\\-]\s*([xX\\d]{9,11})"
+            "(?i)(customer|cust reln|cif|crn)\\s*(id|no\\.?)?\\s*[:\\-]?\s*([xX\\d]{9,11})"
         ).matcher(text);
 
         if (m.find()) {
@@ -197,7 +201,7 @@ public class OcrProcessingService {
         }
 
         Matcher labeled = Pattern.compile(
-            "(PHONE|TEL|CONTACT|BRANCH\\s+PHONE)\\s*[:\\-]?\\s*([+0-9()\\s\\-]{8,20})",
+            "(PHONE|TEL|CONTACT|BRANCH\\h+PHONE(?:\\h+NUMBER)?)\\h*[:\\-]?\\h*([+0-9()\\s\\-]{8,20})",
             Pattern.CASE_INSENSITIVE
         ).matcher(normalized);
 
@@ -270,6 +274,11 @@ public class OcrProcessingService {
 
     public static String extractAccountType(String text, String bank) {
         if (text == null) return null;
+        
+        String normalized = text
+            .replaceAll("[ \t]+", " ")
+            .replaceAll("\\r", "")
+            .toUpperCase();
 
         if ("AXIS".equals(bank)) {
             Matcher m = Pattern.compile(
@@ -277,17 +286,23 @@ public class OcrProcessingService {
                     "([^\\r\\n]{3,60}?)" +
                     "(?=\\s*CKYC|\\r|\\n|$)",
                 Pattern.CASE_INSENSITIVE
-            ).matcher(text);
+            ).matcher(normalized);
 
             if (m.find()) {
                 return cleanAccountType(m.group(2));
             }
+        } else if ("KOTAK".equals(bank)) {
+            Matcher m = Pattern.compile(
+                "\\bAccount\\h+Type\\h+([^\\r\\n]+)",
+                Pattern.CASE_INSENSITIVE
+            ).matcher(text);
+
+            if (m.find()) {
+                String accountType = m.group(1).trim();
+                return accountType;
+            }
         }
 
-        String normalized = text
-            .replaceAll("[ \t]+", " ")
-            .replaceAll("\\r", "")
-            .toUpperCase();
 
         // 1️⃣ Label-based (highest confidence)
         Matcher labeled = Pattern.compile(

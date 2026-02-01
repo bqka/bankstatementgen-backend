@@ -230,13 +230,15 @@ public class KotakNewTemplate implements BankPdfTemplate {
         cs.showText(stmt.details.name);
         cs.setNonStrokingColor(0f);
         cs.endText();
+        
+        String crn = "xxxxxx" + stmt.details.customerRelNo.substring(6);
 
         // CRN
         cs.beginText();
         cs.appendRawCommands("1 0 0 1 38 643.5 Tm\n");
         cs.setFont(fonts.regular, 11);
         cs.setNonStrokingColor(0.62353f, 0.63137f, 0.64314f);
-        cs.showText("CRN " + stmt.details.customerRelNo);
+        cs.showText("CRN " + crn);
         cs.setNonStrokingColor(0f);
         cs.endText();
 
@@ -743,6 +745,31 @@ public class KotakNewTemplate implements BankPdfTemplate {
 
         return y;
     }
+    
+    public static List<String> wrapText(String text, int maxWidth) {
+        List<String> lines = new ArrayList<>();
+        String[] words = text.split(" ");
+    
+        StringBuilder currentLine = new StringBuilder();
+    
+        for (String word : words) {
+            if (currentLine.length() + word.length() + 1 <= maxWidth) {
+                if (currentLine.length() > 0) {
+                    currentLine.append(" ");
+                }
+                currentLine.append(word);
+            } else {
+                lines.add(currentLine.toString());
+                currentLine = new StringBuilder(word);
+            }
+        }
+    
+        if (currentLine.length() > 0) {
+            lines.add(currentLine.toString());
+        }
+    
+        return lines;
+    }
 
     private int countWrappedLines(
         PDFont font,
@@ -1075,22 +1102,30 @@ public class KotakNewTemplate implements BankPdfTemplate {
         cs.showText("Branch Address");
         cs.setNonStrokingColor(0f);
 
-        String addr = stmt.details.branchAddress.replaceAll("\\s*\\R\\s*", " ");
+        String branchAddress = stmt.details.branchAddress.replaceAll("\\s*\\R\\s*", " ");
+        List<String> addr = wrapText(branchAddress, 100);
+        
+        float C_ADDR1 = 201.32f + (fonts.regular.getStringWidth("1st Floor, Shanti Point, Surat - Cloth Market (ring Road).,Surat, Surat-395002, Gujarat, India,")/1000f * 9f)/2;
+        
+        float C_ADDR2 = 349.85f + (fonts.regular.getStringWidth("9099091998")/1000f * 9f)/2;
+        
+        float addr1x = centerAlign(addr.get(0), C_ADDR1, fonts.regular, 9f);
 
-        cs.appendRawCommands("1 0 0 1 201.32 181 Tm\n");
+        cs.appendRawCommands(String.format("1 0 0 1 %.2f 181 Tm\n", addr1x));
         cs.setNonStrokingColor(0f, 0f, 0f);
-        cs.showText(addr);
+        cs.showText(addr.get(0));
         cs.setNonStrokingColor(0f);
 
-        cs.appendRawCommands("1 0 0 1 349.85 169 Tm\n");
-        cs.setNonStrokingColor(0f, 0f, 0f);
-        cs.showText(
-            stmt.details.branchPhoneNo == null
-                ? "1234567890"
-                : stmt.details.branchPhoneNo
-        );
-        cs.setNonStrokingColor(0f);
-        cs.endText();
+        if(addr.size() > 1){
+            float addr2x = centerAlign(addr.get(1), C_ADDR2, fonts.regular, 9f);
+            cs.appendRawCommands(String.format("1 0 0 1 %.2f 169 Tm\n", addr2x));
+            cs.setNonStrokingColor(0f, 0f, 0f);
+            cs.showText(addr.get(1));
+            cs.setNonStrokingColor(0f);
+            cs.endText();
+        } else {
+            cs.endText();
+        }
 
         // ================================
         // Rounded rectangle background
@@ -1196,6 +1231,11 @@ public class KotakNewTemplate implements BankPdfTemplate {
         cs.setNonStrokingColor(0f);
         cs.endText();
         cs.restoreGraphicsState();
+    }
+    
+    private float centerAlign(String text, float center, PDFont font, float fontSize) throws IOException {
+        float textWidth = (font.getStringWidth(text) / 1000f) * fontSize;
+        return center - (textWidth / 2f);
     }
 
     private final void drawHeader(PDPageContentStream cs, Fonts fonts)

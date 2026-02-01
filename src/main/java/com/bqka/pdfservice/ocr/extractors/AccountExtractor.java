@@ -11,7 +11,7 @@ public class AccountExtractor {
         }
 
         Matcher labeled = Pattern.compile(
-                "ACCOUNT\\s*(NO|NUMBER)?\\s*[:\\-]?\\s*([\\d\\s]{9,20})",
+                "ACCOUNT\\s*(NO|NUMBER|NO.)?\\s*[:\\-]?\\s*([\\d\\s]{9,20})",
                 Pattern.CASE_INSENSITIVE).matcher(text);
 
         if (labeled.find()) {

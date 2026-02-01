@@ -15,8 +15,10 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.apache.pdfbox.cos.COSDictionary;
@@ -114,36 +116,67 @@ public class BoiTemplate implements BankPdfTemplate {
             cs = new PDPageContentStream(doc, page);
             
             String[] addr = stmt.details.address.split("\n");
+            List<String> name = wrapText(stmt.details.name, 26);
             
-            Map<String, Object> fields = Map.ofEntries(
-                Map.entry("NAME", stmt.details.name),
-                Map.entry("CUSTOMER_ID", stmt.details.customerRelNo),
-                Map.entry("ACCOUNT_NO", stmt.details.accountNumber),
-                Map.entry("ADDR1", addr[0]),
-                Map.entry("ADDR2", addr[1]),
-                Map.entry("IFSC", stmt.details.ifsc),
-                Map.entry("BRANCH_NAME", stmt.details.branch),
-                Map.entry("DATE2", formatIsoInstantDate2(stmt.meta.generatedAt))
-            );
+            boolean multiheader = name.size() == 2 && addr.length == 3;
+            
+            String template, template2;
+            Map<String, Object> fields;
+            if(multiheader){
+                template = load("/boistreams/headerinfoBIG.pdfops");
+                template2 = load("/boistreams/headerinfo2BIG.pdfops");
+                fields = Map.ofEntries(
+                    Map.entry("NAME1", name.get(0)),
+                    Map.entry("NAME2", name.get(1)),
+                    Map.entry("CUSTOMER_ID", stmt.details.customerRelNo),
+                    Map.entry("ACCOUNT_NO", stmt.details.accountNumber),
+                    Map.entry("ADDR1", addr[0]),
+                    Map.entry("ADDR2", addr[1]),
+                    Map.entry("ADDR3", addr[2]),
+                    Map.entry("IFSC", stmt.details.ifsc),
+                    Map.entry("BRANCH_NAME", stmt.details.branch),
+                    Map.entry("DATE2", formatIsoInstantDate2(stmt.meta.generatedAt))
+                );
+            } else{
+                template = load("/boistreams/headerinfo.pdfops");
+                template2 = load("/boistreams/headerinfo2.pdfops");
+                fields = Map.ofEntries(
+                    Map.entry("NAME", stmt.details.name),
+                    Map.entry("CUSTOMER_ID", stmt.details.customerRelNo),
+                    Map.entry("ACCOUNT_NO", stmt.details.accountNumber),
+                    Map.entry("ADDR1", addr[0]),
+                    Map.entry("ADDR2", addr[1]),
+                    Map.entry("IFSC", stmt.details.ifsc),
+                    Map.entry("BRANCH_NAME", stmt.details.branch),
+                    Map.entry("DATE2", formatIsoInstantDate2(stmt.meta.generatedAt))
+                );
+            }
             
             Map<String, Object> fields2 = Map.ofEntries(
                 Map.entry("START_DATE", formatIsoInstantDate(stmt.meta.statementPeriodStart)),
                 Map.entry("END_DATE", formatIsoInstantDate(stmt.meta.statementPeriodEnd))
             );
 
-            String template = load("/boistreams/headerinfo.pdfops");
             String rendered = renderPdfOps(template, fields);
             cs.appendRawCommands(rendered + "\n");
             
             float bottomMargin = 60f;
             int i = 1;
+            float grid_top, grid_bottom;
+            if(multiheader){
+                grid_top = 1109.54f;
+                grid_bottom = 1052.01f;
+            } else {
+                grid_top = 1131.72f;
+                grid_bottom = 1075.32f;
+            }
             cs.appendRawCommands("Q\n");
             cs.appendRawCommands("Q\n");
             cs.appendRawCommands("Q\n");
-            cs.appendRawCommands(buildHeaderGrid());
+            cs.appendRawCommands(buildHeaderGrid(grid_top, grid_bottom));
 
             StringBuilder gridBuffer = new StringBuilder();
-            float y = 1075.32f;
+            float y = multiheader ? 1052.01f : 1075.32f;
             // cs.appendRawCommands(buildRowSeparator(y));
 
             float table_top = y;
@@ -160,8 +193,7 @@ public class BoiTemplate implements BankPdfTemplate {
                         cs.drawImage(logo, 1089, 1664.5f, 336, 135);
                         cs.restoreGraphicsState();
             
-                        template = load("/boistreams/headerinfo2.pdfops");
-                        rendered = renderPdfOps(template, fields2);
+                        rendered = renderPdfOps(template2, fields2);
                         cs.appendRawCommands(rendered + "\n");
                     }
                     // new page
@@ -215,6 +247,31 @@ public class BoiTemplate implements BankPdfTemplate {
         } catch (Exception e) {
             throw new RuntimeException("PDF generation failed", e);
         }
+    }
+    
+    public static List<String> wrapText(String text, int maxWidth) {
+        List<String> lines = new ArrayList<>();
+        String[] words = text.split(" ");
+    
+        StringBuilder currentLine = new StringBuilder();
+    
+        for (String word : words) {
+            if (currentLine.length() + word.length() + 1 <= maxWidth) {
+                if (currentLine.length() > 0) {
+                    currentLine.append(" ");
+                }
+                currentLine.append(word);
+            } else {
+                lines.add(currentLine.toString());
+                currentLine = new StringBuilder(word);
+            }
+        }
+    
+        if (currentLine.length() > 0) {
+            lines.add(currentLine.toString());
+        }
+    
+        return lines;
     }
 
     void drawFooterBlock(
@@ -310,11 +367,11 @@ public class BoiTemplate implements BankPdfTemplate {
         return g.toString();
     }
 
-    String buildHeaderGrid() {
+    String buildHeaderGrid(float top, float bottom) {
         StringBuilder g = new StringBuilder();
 
-        float top = 1131.72f;
-        float bottom = 1075.32f;
+        // float top = 1131.72f;
+        // float bottom = 1075.32f;
 
         // verticals
         g
