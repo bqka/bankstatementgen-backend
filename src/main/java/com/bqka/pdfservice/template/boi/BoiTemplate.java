@@ -118,16 +118,17 @@ public class BoiTemplate implements BankPdfTemplate {
             String[] addr = stmt.details.address.split("\n");
             List<String> name = wrapText(stmt.details.name, 26);
             
-            boolean multiheader = name.size() == 2 && addr.length == 3;
+            boolean multiheader = name.size() == 2 || addr.length == 3;
             
             String template, template2;
             Map<String, Object> fields;
             if(multiheader){
                 template = load("/boistreams/headerinfoBIG.pdfops");
                 template2 = load("/boistreams/headerinfo2BIG.pdfops");
+                // float namey = 448.5f;
                 fields = Map.ofEntries(
                     Map.entry("NAME1", name.get(0)),
-                    Map.entry("NAME2", name.get(1)),
+                    Map.entry("NAME2", name.size() > 1 ? name.get(1) : ""),
                     Map.entry("CUSTOMER_ID", stmt.details.customerRelNo),
                     Map.entry("ACCOUNT_NO", stmt.details.accountNumber),
                     Map.entry("ADDR1", addr[0]),
@@ -171,7 +172,7 @@ public class BoiTemplate implements BankPdfTemplate {
                 grid_bottom = 1075.32f;
             }
             cs.appendRawCommands("Q\n");
-            cs.appendRawCommands("Q\n");
+            // cs.appendRawCommands("Q\n");
             cs.appendRawCommands("Q\n");
             cs.appendRawCommands(buildHeaderGrid(grid_top, grid_bottom));
 
