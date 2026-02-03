@@ -131,9 +131,9 @@ public class BoiTemplate implements BankPdfTemplate {
                     Map.entry("NAME2", name.size() > 1 ? name.get(1) : ""),
                     Map.entry("CUSTOMER_ID", stmt.details.customerRelNo),
                     Map.entry("ACCOUNT_NO", stmt.details.accountNumber),
-                    Map.entry("ADDR1", addr[0]),
-                    Map.entry("ADDR2", addr[1]),
-                    Map.entry("ADDR3", addr[2]),
+                    Map.entry("ADDR1", addr.length > 0 ? addr[0] : ""),
+                    Map.entry("ADDR2", addr.length > 1 ? addr[1] : ""),
+                    Map.entry("ADDR3", addr.length > 2 ? addr[2] : ""),
                     Map.entry("IFSC", stmt.details.ifsc),
                     Map.entry("BRANCH_NAME", stmt.details.branch),
                     Map.entry("DATE2", formatIsoInstantDate2(stmt.meta.generatedAt))
@@ -145,8 +145,8 @@ public class BoiTemplate implements BankPdfTemplate {
                     Map.entry("NAME", stmt.details.name),
                     Map.entry("CUSTOMER_ID", stmt.details.customerRelNo),
                     Map.entry("ACCOUNT_NO", stmt.details.accountNumber),
-                    Map.entry("ADDR1", addr[0]),
-                    Map.entry("ADDR2", addr[1]),
+                    Map.entry("ADDR1", (addr.length > 0 ? addr[0] : "")),
+                    Map.entry("ADDR2", (addr.length > 1 ? addr[1] : "")),
                     Map.entry("IFSC", stmt.details.ifsc),
                     Map.entry("BRANCH_NAME", stmt.details.branch),
                     Map.entry("DATE2", formatIsoInstantDate2(stmt.meta.generatedAt))
