@@ -71,6 +71,7 @@ public class NameExtractor {
     public static String extractAxis(String text) {
         String normalized = text.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
 
+        // changed this
         Matcher m = Pattern.compile(
             "(?im)^\\s*(.+)\\R\\s*Joint Holder\\b"
         ).matcher(normalized);
