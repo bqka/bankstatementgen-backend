@@ -536,7 +536,7 @@ public class HdfcTemplate implements BankPdfTemplate {
 
     private float drawTransactions(PDDocument doc) throws IOException {
         float y = START_ROW_Y;
-        float tableTop = TABLE_TOP_Y;
+        float tableTop = pageno == 1 ? TABLE_TOP_Y_PAGE_1 : TABLE_BOTTOM_Y;
 
         drawTableBackground(cs, tableTop, TABLE_BOTTOM_Y_PAGE_1);
         String template = load("/hdfcstreams/tableheader.pdfops");
