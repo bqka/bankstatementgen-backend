@@ -135,9 +135,10 @@ public class SbiNewTemplate implements BankPdfTemplate {
                 .split("\n");
             String[] addr = stmt.details.address.split("\n");
 
+            String addrfont = addr.length == 3 ? "9" : "10";
             StringBuilder sb = new StringBuilder(
                 "1 0 0 1 67 680.65 Tm\n" +
-                    "/F1 9 Tf\n" +
+                    "/F1 "+addrfont +" Tf\n" +
                     "0 0 0 rg\n" +
                     "(" +
                     pdfEscapeLiteral(addr[0]) +
@@ -170,6 +171,7 @@ public class SbiNewTemplate implements BankPdfTemplate {
                 Map.entry("BRANCH_PHONE", stmt.details.branchPhoneNo),
                 Map.entry("BRANCH_CODE", branchCode),
                 Map.entry("OPENING_BAL", formatIndianAmount(stmt.details.startingBalance) + "CR"),
+                Map.entry("BADDRFONT", baddr.length == 3 ? "8.5" : "10"),
                 Map.entry(
                     "EMAIL",
                     stmt.details.email == null

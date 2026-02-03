@@ -523,7 +523,7 @@ ET
 1 0 0 1 0 0 cm
 BT
 1 0 0 1 344 722.11 Tm
-/F1 8.5 Tf
+/F1 10 Tf
 0 0 0 rg
 ({{BRANCH_NAME}})Tj
 0 g
@@ -594,7 +594,7 @@ S
 1 0 0 1 0 0 cm
 BT
 1 0 0 1 347 698.11 Tm
-/F1 8.5 Tf
+/F1 {{BADDRFONT}} Tf
 0 0 0 rg
 ({{BADDRL1}})Tj
 0 g
