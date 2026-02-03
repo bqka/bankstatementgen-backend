@@ -157,7 +157,7 @@ public class OcrProcessingService {
         if (text == null) return null;
 
         Matcher m = Pattern.compile(
-            "(?i)(customer|cust reln|cif|crn)\\s*(id|no\\.?)?\\s*[:\\-]?\s*([xX\\d]{9,11})"
+            "(?i)(customer|cust reln|cif|crn|cust)\\s*(id|no\\.?)?\\s*[:\\-]?\s*([xX\\d]{9,11})"
         ).matcher(text);
 
         if (m.find()) {

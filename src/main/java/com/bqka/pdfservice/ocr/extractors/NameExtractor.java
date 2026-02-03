@@ -71,8 +71,10 @@ public class NameExtractor {
     public static String extractAxis(String text) {
         String normalized = text.replaceAll("\r\n", "\n").replaceAll("\r", "\n");
 
-        Matcher m = Pattern.compile("(?is)(.*?)\\s*(?=Joint Holder :- -)").matcher(normalized);
-
+        Matcher m = Pattern.compile(
+            "(?im)^\\s*(.+)\\R\\s*Joint Holder\\b"
+        ).matcher(normalized);
+        
         if (m.find()) {
             return m.group(1);
         }
