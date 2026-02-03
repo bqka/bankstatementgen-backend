@@ -56,10 +56,7 @@ public class BranchAddressExtractor {
             return null;
 
         Matcher m = Pattern.compile(
-                "BRANCH\\s+ADDRESS\\s*(?:[:\\-]\\s*)?" +
-                        "(.{20,200}?)" +
-                        "(?=\\s*TEL\\s*:)",
-                Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(text);
+                "BRANCH\\s+ADDRESS\\s*(?:[:\\-]\\s*)?" + "(.{20,200}?)" + "(?=\\s*TEL\\s*:)", Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(text);
 
         if (m.find()) {
             return m.group(1)
