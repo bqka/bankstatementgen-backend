@@ -215,11 +215,11 @@ public class HdfcTemplate implements BankPdfTemplate {
         String nameReplace = (designation != "" ? "(" + designation + ")" + " -1000.0 " : "") + format(name);
         
         String[] addr = stmt.details.address.toUpperCase().split("\\n");
-        String addr1 = addr[0] != null ? format(addr[0]) : "(.)";
-        String addr2 = addr[1] != null ? format(addr[1]) : "(.)";
-        String addr3 = addr[2] != null ? format(addr[2]) : "(.)";
-        String addr4 = addr[3] != null ? format(addr[3]) : "(.)";
-        String addr5 = addr[2] != null ? format(addr[4]) : "(.)";
+        String addr1 = addr.length > 0 ? format(addr[0]) : "(.)";
+        String addr2 = addr.length > 1 ? format(addr[1]) : "(.)";
+        String addr3 = addr.length > 2 ? format(addr[2]) : "(.)";
+        String addr4 = addr.length > 3 ? format(addr[3]) : "(.)";
+        String addr5 = addr.length > 4 ? format(addr[4]) : "(.)";
         
         String[] baddr = stmt.details.branchAddress.toUpperCase().split("\n");
         String baddr1 = baddr[0] != null ? format(baddr[0]) : "(.)";
