@@ -25,6 +25,10 @@ public class OcrProcessingService {
 
         r.ifsc = IfscExtractor.extract(cleaned);
         r.bankName = BankDetector.detectFromIFSC(r.ifsc);
+        
+        if(r.bankName == null){
+            throw new Error("No Bank Name Detected");
+        }
 
         r.name = NameExtractor.extract(cleaned, r.bankName);
         r.accountNumber = AccountExtractor.extract(cleaned, r.bankName);
